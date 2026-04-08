@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Ines", "Camus", "camus.ines94@gmail.com", role = c("aut", "cre")),
     person("Sofia", "Ben-Atmane", "sofia.benatmane1@gmail.com", role = c("aut", "cre"))
-Description: Genere des grilles de slitherlink et permet d’y jouer via une application Shiny.
+Description: Genere des grilles de slitherlink et permet de jouer via une application Shiny.
 License:  Apache License (>=2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
