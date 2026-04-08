@@ -1,0 +1,353 @@
+#' Générer une boucle aléatoire pour une grille Slitherlink
+#'
+#' Cette fonction génère une boucle fermée aléatoire sur une grille carrée
+#' de taille \code{n x n}, représentant une solution valide pour un puzzle
+#' de type Slitherlink.
+#'
+#' L'algorithme construit un chemin aléatoire sans revisiter de points,
+#' puis tente de fermer la boucle. Si aucune boucle valide n'est trouvée
+#' après plusieurs essais, une boucle rectangulaire simple est générée.
+#'
+#' @param n Entier. Taille de la grille (nombre de cases par côté).
+#' @param min_segments Entier. Nombre minimal de segments requis pour valider
+#'   la boucle (par défaut \code{2*n}).
+#'
+#' @return Une liste contenant :
+#' \describe{
+#'   \item{segments}{Liste de segments définissant la boucle. Chaque segment
+#'   est un vecteur \code{(x1, y1, x2, y2)}.}
+#'   \item{points_visites}{Liste des points parcourus par la boucle.}
+#'   \item{n}{Taille de la grille.}
+#' }
+#'
+#' @examples
+#' boucle <- generer_boucle_slitherlink(5)
+#' length(boucle$segments)
+#'
+#' @export
+generer_boucle_slitherlink <- function(n, min_segments = n*2) {
+  # Créer une grille de points (noeuds) de taille (n+1) x (n+1)
+
+  max_essais <- 1000 # pour ne pas avoir une boucle infinie
+  for(essai in 1:max_essais) {
+    # Choisir un point de départ aléatoire
+    x <- sample(1:(n+1), 1)
+    y <- sample(1:(n+1), 1)
+
+    start <- c(x, y) # notre point de depart
+
+    # Liste des points visités
+    points_visites <- list()
+    points_visites[[1]] <- start # le premier point visité est notre point de départ défini aléatoirement
+
+    # Liste des segments
+    segments <- list()
+
+    # Position courante
+    courant_x <- x
+    courant_y <- y
+
+    # Variable pour savoir si on a fermé la boucle
+    boucle_fermee <- FALSE
+
+    # Construction du chemin
+    # tant que la boucle est ouverte et que le nombre de segment est trop petit
+    while (!boucle_fermee && length(segments) < 4*n) {
+
+      # Déterminer les directions possibles
+      directions_possibles <- list()
+
+      # Droite
+      if (courant_x + 1 <= n+1) {
+        nouveau_point <- c(courant_x + 1, courant_y)
+        # Vérifier si c'est le départ
+
+        # Si ce point est le départ ET qu'on a assez de segments, on autorise cette direction et on marque qu'on va fermer la boucle
+        if (nouveau_point[1] == start[1] && nouveau_point[2] == start[2]) {
+          if (length(segments) >= min_segments) { #'
+            directions_possibles[["droite"]] <- nouveau_point
+            boucle_fermee <- TRUE
+          }
+        } else { # si le point a droite n'est pas le point de départ
+          # Vérifier que le point n'est pas déjà visité
+          deja_visite <- FALSE  # on part du principe qu'il n'a pas été visité jusqu'a preuve du contraire
+          for (p in points_visites) {
+            if (p[1] == nouveau_point[1] && p[2] == nouveau_point[2]) {
+              deja_visite <- TRUE
+              break
+            }
+          }
+          if (!deja_visite) { # si il n'a pas été visité on l'ajoute dans les directions possibles
+            directions_possibles[["droite"]] <- nouveau_point
+          }
+        }
+      }
+
+      # Gauche
+      if (courant_x - 1 >= 1) {
+        nouveau_point <- c(courant_x - 1, courant_y)
+        if (nouveau_point[1] == start[1] && nouveau_point[2] == start[2]) {
+          if (length(segments) >= min_segments) {
+            directions_possibles[["gauche"]] <- nouveau_point
+            boucle_fermee <- TRUE
+          }
+        } else {
+          deja_visite <- FALSE
+          for (p in points_visites) {
+            if (p[1] == nouveau_point[1] && p[2] == nouveau_point[2]) {
+              deja_visite <- TRUE
+              break
+            }
+          }
+          if (!deja_visite) {
+            directions_possibles[["gauche"]] <- nouveau_point
+          }
+        }
+      }
+
+      # Haut
+      if (courant_y + 1 <= n+1) {
+        nouveau_point <- c(courant_x, courant_y + 1)
+        if (nouveau_point[1] == start[1] && nouveau_point[2] == start[2]) {
+          if (length(segments) >= min_segments) {
+            directions_possibles[["haut"]] <- nouveau_point
+            boucle_fermee <- TRUE
+          }
+        } else {
+          deja_visite <- FALSE
+          for (p in points_visites) {
+            if (p[1] == nouveau_point[1] && p[2] == nouveau_point[2]) {
+              deja_visite <- TRUE
+              break
+            }
+          }
+          if (!deja_visite) {
+            directions_possibles[["haut"]] <- nouveau_point
+          }
+        }
+      }
+
+      # Bas
+      if (courant_y - 1 >= 1) {
+        nouveau_point <- c(courant_x, courant_y - 1)
+        if (nouveau_point[1] == start[1] && nouveau_point[2] == start[2]) {
+          if (length(segments) >= min_segments) {
+            directions_possibles[["bas"]] <- nouveau_point
+            boucle_fermee <- TRUE
+          }
+        } else {
+          deja_visite <- FALSE
+          for (p in points_visites) {
+            if (p[1] == nouveau_point[1] && p[2] == nouveau_point[2]) {
+              deja_visite <- TRUE
+              break
+            }
+          }
+          if (!deja_visite) {
+            directions_possibles[["bas"]] <- nouveau_point
+          }
+        }
+      }
+
+      # Si plus de directions possibles et pas encore fermé, on a échoué a créer une boucle
+      if (length(directions_possibles) == 0) {
+        break
+      }
+
+      # Choisir une direction aléatoire, parmis toutes les directions possibles trouvées précédemment
+      # si la boucle n'est pas encore fermé
+      if (!boucle_fermee) {
+        noms_dirs <- names(directions_possibles) # on Récupère les noms des directions possibles
+        dir_choisie <- sample(noms_dirs, 1) # on en tire une aléatoirement
+        nouveau_point <- directions_possibles[[dir_choisie]] # On récupère les coordonnées de la direction choisie qu'on attribue au nouveaut points a
+
+        # Ajouter le segment
+        segments[[length(segments) + 1]] <- c(courant_x, courant_y, nouveau_point[1], nouveau_point[2])
+
+        # Mettre à jour la position
+        courant_x <- nouveau_point[1]
+        courant_y <- nouveau_point[2]
+
+        # Ajouter aux points visités
+        points_visites[[length(points_visites) + 1]] <- c(courant_x, courant_y)
+      } else {
+        # Fermer la boucle
+        segments[[length(segments) + 1]] <- c(courant_x, courant_y, start[1], start[2])
+      }
+    }
+
+    # si on a réussi à faire une boucle assez longue
+    if (boucle_fermee && length(segments) >= min_segments) {
+      # Retourner la boucle brute (segments et points visités)
+      return(list(
+        segments = segments,
+        points_visites = points_visites,
+        n = n
+      ))
+    }
+  }
+
+  # Si on a échoué, générer une boucle rectangle de secours
+  return(creer_boucle_rectangle(n))
+}
+
+
+#----------------------------------
+#' Fonction de secours pour créer un rectangle si on arrive pas a créer une boucle plus compliqué
+#----------------------------------
+
+#' Générer une boucle rectangulaire simple
+#'
+#' Fonction de secours utilisée lorsque la génération aléatoire échoue.
+#' Elle construit une boucle rectangulaire qui fait le tour complet de la grille.
+#'
+#' @param n Entier. Taille de la grille.
+#'
+#' @return Une liste contenant les segments, les points visités et la taille \code{n}.
+#'
+#' @examples
+#' boucle <- creer_boucle_rectangle(4)
+#' @export
+creer_boucle_rectangle <- function(n) {
+  segments <- list()
+  points_visites <- list()
+
+  # Créer un rectangle qui fait le tour
+  # Aller de (1,1) à (n+1,1) en bas
+  for (x in 1:n) {
+    segments[[length(segments) + 1]] <- c(x, 1, x+1, 1)
+  }
+  # Aller de (n+1,1) à (n+1,n+1) à droite
+  for (y in 1:n) {
+    segments[[length(segments) + 1]] <- c(n+1, y, n+1, y+1)
+  }
+  # Aller de (n+1,n+1) à (1,n+1) en haut
+  for (x in n:1) {
+    segments[[length(segments) + 1]] <- c(x+1, n+1, x, n+1)
+  }
+  # Aller de (1,n+1) à (1,1) à gauche
+  for (y in n:1) {
+    segments[[length(segments) + 1]] <- c(1, y+1, 1, y)
+  }
+
+  # Créer les points visités
+  for (x in 1:(n+1)) {
+    points_visites[[length(points_visites) + 1]] <- c(x, 1)
+  }
+  for (y in 2:(n+1)) {
+    points_visites[[length(points_visites) + 1]] <- c(n+1, y)
+  }
+  for (x in n:1) {
+    points_visites[[length(points_visites) + 1]] <- c(x, n+1)
+  }
+  for (y in n:2) {
+    points_visites[[length(points_visites) + 1]] <- c(1, y)
+  }
+
+  return(list(
+    segments = segments,
+    points_visites = points_visites,
+    n = n
+  ))
+}
+
+
+#--------------------------------
+#' fonction qui convertie une boucle en matrice d'indices Slitherlink
+#---------------------------------
+#' Convertir une boucle en grille d'indices Slitherlink
+#'
+#' Cette fonction transforme une boucle en une matrice d'indices correspondant
+#' aux règles du jeu Slitherlink. Chaque case contient le nombre de segments
+#' qui l'entourent.
+#'
+#' Certains zéros peuvent être masqués (remplacés par NA) pour rendre
+#' le puzzle plus intéressant et plus difficile.
+#'
+#' @param boucle Liste retournée par \code{generer_boucle_slitherlink()}.
+#' @param n_zeros_gris Entier. Nombre de zéros à conserver visibles
+#'   (les autres seront remplacés par \code{NA}).
+#'
+#' @return Une liste contenant :
+#' \describe{
+#'   \item{indices}{Matrice \code{n x n} des indices Slitherlink.}
+#'   \item{segments}{Segments de la boucle.}
+#'   \item{points_visites}{Points parcourus.}
+#'   \item{n}{Taille de la grille.}
+#' }
+#'
+#' @examples
+#' boucle <- generer_boucle_slitherlink(5)
+#' grille <- convertir_en_indices(boucle)
+#' grille$indices
+#'
+#' @export
+convertir_en_indices <- function(boucle, n_zeros_gris = 3) {
+  segments <- boucle$segments
+  n <- boucle$n
+
+  # Matrices de segments horizontaux et verticaux
+  segments_h <- matrix(FALSE, nrow = n+1, ncol = n)
+  segments_v <- matrix(FALSE, nrow = n, ncol = n+1)
+
+  # Remplir les matrices à partir des segments
+  for (segment in segments) {
+    x1 <- segment[1]
+    y1 <- segment[2]
+    x2 <- segment[3]
+    y2 <- segment[4]
+
+    if (y1 == y2) {  # segment horizontal
+      j <- min(x1, x2)
+      if (j >= 1 && j <= n) {
+        segments_h[y1, j] <- TRUE
+      }
+    } else {  # segment vertical
+      i <- min(y1, y2)
+      if (i >= 1 && i <= n) {
+        segments_v[i, x1] <- TRUE
+      }
+    }
+  }
+
+  # Calculer les indices pour chaque case
+  indices <- matrix(0, nrow = n, ncol = n)
+  for (i in 1:n) {
+    for (j in 1:n) {
+      count <- 0
+      # segment en bas
+      if (segments_h[i, j]) count <- count + 1
+      # segment en haut
+      if (segments_h[i+1, j]) count <- count + 1
+      # segment à gauche
+      if (segments_v[i, j]) count <- count + 1
+      # segment à droite
+      if (segments_v[i, j+1]) count <- count + 1
+      # inversion des lignes pour que la ligne 1 soit en bas
+      indices[i, j] <- count
+    }
+  }
+  # Sélectionner quelques zéros aléatoires
+  zero_pos <- which(indices == 0, arr.ind = TRUE)
+  if (nrow(zero_pos) > 0) {
+    n_select <- min(n_zeros_gris, nrow(zero_pos))
+    selected <- zero_pos[sample(1:nrow(zero_pos), n_select), , drop = FALSE]
+
+    # Créer une copie de indices avec NA
+    indices_mask <- matrix(NA, nrow = n, ncol = n)
+    for (k in 1:nrow(selected)) {
+      indices_mask[selected[k, 1], selected[k, 2]] <- 0
+    }
+
+    # Remplacer les zéros non sélectionnés par NA
+    indices[indices == 0] <- NA
+    indices[!is.na(indices_mask)] <- 0
+  }
+
+  return(list(
+    indices = indices,
+    segments = segments,
+    points_visites = boucle$points_visites,
+    n = n
+  ))
+}
