@@ -1,7 +1,7 @@
 Package: projetR
 Title: Jeu du Slitherlink
 Version: 0.0.0.9000
-Authors@R:c(
+Authors@R: c(
     person("Ines", "Camus", "camus.ines94@gmail.com", role = c("aut", "cre")),
     person("Sofia", "Ben-Atmane", "sofia.benatmane1@gmail.com", role = c("aut", "cre"))
 )
