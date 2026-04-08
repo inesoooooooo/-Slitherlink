@@ -20,10 +20,28 @@ ui <- bslib::page_sidebar(
   bslib::accordion(
     open = FALSE,  # le panneau est fermé par défaut
     bslib::accordion_panel(
-      HTML("<span style='color:#F17CB0; font-size:16px;'><b>Règle du Jeu :</b><br></span>"),
-      HTML("<span style='color:#F17CB0; font-size:12px;'>
-        Le Slither Link se joue sur une matrice rectangulaire formée de cases carrées. Chaque case peut soit être vide, soit contenir un chiffre entre 0 et 3 inclus. Les côtés des cases sont vides au début de la partie. L'objectif est de tracer des traits le long des côtés des cases, de sorte à respecter deux règles : l'ensemble des traits doit former une unique ligne continue, une case contenant un chiffre doit avoir exactement autant de côtés avec un trait tracé que le chiffre qu'elle contient.
-        </span>")
+      title = HTML("<span style='color:#F17CB0; font-size:16px;'><b>Règle du Jeu :</b><br></span>"),
+      HTML("<div style='color:#F17CB0; font-size:12px;'>
+        <p>
+          Le <strong>Slither Link</strong> se joue sur une grille rectangulaire composée de cases carrées.
+          Certaines cases peuvent être vides ou contenir un chiffre allant de <strong>0 à 3</strong>.
+          Au début de la partie, tous les côtés des cases sont vides.
+        </p>
+
+        <p>
+          Lorsqu’on clique une fois entre deux points, un <strong>segment</strong> apparaît.
+          Si l’on clique deux fois rapidement au même endroit, une <span style='color:red;'>croix rouge</span>
+          s’affiche à la place, indiquant que ce côté ne doit pas être utilisé.
+        </p>
+
+        <p>L’objectif est de tracer des segments en respectant deux règles :</p>
+
+        <ul>
+          <li>former <strong>une unique boucle fermée et continue</strong>, sans branchement ni croisement ;</li>
+          <li>chaque case contenant un chiffre doit avoir exactement autant de côtés tracés que le nombre indiqué.</li>
+        </ul>
+      </div> ")
+        
     )
   ),
   bslib::card(
