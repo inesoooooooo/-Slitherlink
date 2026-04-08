@@ -396,6 +396,8 @@ server <- function(input, output, session) {
   })
 
 }
+#' Lancer l'application Shiny Slitherlink
+#' @export                                 
 lancer_slitherlink <- function() {
   shiny::shinyApp(ui = ui, server = server)
 }
