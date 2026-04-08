@@ -2,15 +2,15 @@ Package: projetR
 Title: Jeu du Slitherlink
 Version: 0.0.0.9000
 Authors@R: c(
-    person("Ines", "Camus", "camus.ines94@gmail.com", role = c("aut", "cre")),
-    person("Sofia", "Ben-Atmane", "sofia.benatmane1@gmail.com", role = c("aut", "cre"))
+    person("Ines", "Camus", email = "camus.ines94@gmail.com", role = c("aut", "cre")),
+    person("Sofia", "Ben-Atmane", email = "sofia.benatmane1@gmail.com", role = c("aut", "cre"))
 )
 Description: Genere des grilles de slitherlink et permet de jouer via une application Shiny.
-License:  Apache License (>=2.0)
+License: Apache License (>= 2.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-Imports: shiny,bslib,ggplot2,magrittr
+Imports: shiny, bslib, ggplot2, magrittr
 Collate: 
     'generation.R'
     'affichage.R'
