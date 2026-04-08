@@ -15,7 +15,7 @@ application Shiny.
 You can install the development version of projetR like so:
 
 ``` r
-remotes::install_github("inesoooooooo/projetR")
+remotes::install_github("inesoooooooo/-Slitherlink")
 ```
 
 ## Example
