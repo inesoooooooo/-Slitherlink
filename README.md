@@ -22,5 +22,5 @@ remotes::install_github("inesoooooooo/-Slitherlink")
 
 ``` r
 library(projetR)
-lancer_slitherlink()
+shiny::shinyApp(ui = projetR:::ui, server = projetR:::server)
 ```
